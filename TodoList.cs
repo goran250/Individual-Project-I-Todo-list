@@ -16,7 +16,8 @@ namespace Project_I_Todo_list
 
         private void GetDataFromFile()
 		{            
-            string filePath = "/Programutveckling/IT Påbyggnad Programmering AI/Individual-Project-I-Todo-list/projects.json";
+            // string filePath = "/Programutveckling/IT Påbyggnad Programmering AI/Individual-Project-I-Todo-list/projects.json";
+            string filePath = "/Programmering/IT Påbyggnad Programmering AI/Individual-Project-I-Todo-list/projects.json";
 
             // Read the entire content of the JSON file into a string
             var json = File.ReadAllText(filePath);
