@@ -4,11 +4,11 @@ This a todo list application called TodoList. The namespace is called Project_I_
 The is a console app with a text based user interface that can b accessed through the command-line.
 The application will allow a user to create new tasks, assign them a title, description and a due date, and choose a 
 project for that task to belong to.
+
 When the user is using the app, the user should be able to also edit, mark as done or remove tasks. They can also quit and save the current task list to file, and then restart 
 the application with the content of this file restored. The interface should look similar to the mockup below:
 
-
-
+(https://github.com/user-attachments/assets/0c92574e-cb30-4610-b3a8-e0a236b2cc91)
 
 Requirements
 
