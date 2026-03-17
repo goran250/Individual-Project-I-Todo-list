@@ -7,12 +7,15 @@ project for that task to belong to.
 When the user is using the app, the user should be able to also edit, mark as done or remove tasks. They can also quit and save the current task list to file, and then restart 
 the application with the content of this file restored. The interface should look similar to the mockup below:
 
-<img width="1328" height="400" alt="image" src="/images/TodoList-meny.jpg>
+
+
+
 Requirements
-The solution must achieve the following requirements:
-Model a task with a task title, due date, status and project
-Display a collection of tasks that can be sorted both by date and project
-Support the ability to add, edit, mark as done, and remove tasks
-Support a text-based user interface
-Load and save task list to file The solution may also include other creative features at your discretion
+
+* The solution must achieve the following requirements:
+* Model a task with a task title, due date, status and project
+* Display a collection of tasks that can be sorted both by date and project
+* Support the ability to add, edit, mark as done, and remove tasks
+* Support a text-based user interface
+* Load and save task list to file The solution may also include other creative features at your discretion
 
