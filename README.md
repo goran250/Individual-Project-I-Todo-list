@@ -10,17 +10,9 @@ the application with the content of this file restored. The interface should loo
 <img width="1328" height="400" alt="image" src="/images/TodoList-meny.jpg>
 Requirements
 The solution must achieve the following requirements:
- Model a task with a task title, due date, status and project
- Display a collection of tasks that can be sorted both by date and project
- Support the ability to add, edit, mark as done, and remove tasks
- Support a text-based user interface
- Load and save task list to file The solution may also include other creative features at your discretion
+Model a task with a task title, due date, status and project
+Display a collection of tasks that can be sorted both by date and project
+Support the ability to add, edit, mark as done, and remove tasks
+Support a text-based user interface
+Load and save task list to file The solution may also include other creative features at your discretion
 
-
-Requirements
-The solution must achieve the following requirements:
- Model a task with a task title, due date, status and project
- Display a collection of tasks that can be sorted both by date and project
- Support the ability to add, edit, mark as done, and remove tasks
- Support a text-based user interface
- Load and save task list to file The solution may also include other creative features at your discretion in case you wish to show some flair.
