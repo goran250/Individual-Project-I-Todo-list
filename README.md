@@ -7,7 +7,7 @@ project for that task to belong to.
 When the user is using the app, the user should be able to also edit, mark as done or remove tasks. They can also quit and save the current task list to file, and then restart 
 the application with the content of this file restored. The interface should look similar to the mockup below:
 
-<img width="1328" height="400" alt="image" src="https://github.com/user-attachments/assets/230b93d2-11f6-4aac-97fc-68a45f9c3cf3" />  
+<img width="1328" height="400" alt="image" src="/images/TodoList-meny.jpg>
 Requirements
 The solution must achieve the following requirements:
  Model a task with a task title, due date, status and project
