@@ -9,7 +9,7 @@ When the user is using the app, the user should be able to also edit, mark as do
 and save the current task list to file, and then restart the application with the content of this file restored. The 
 interface should look similar to the mockup below:
 
-![TodoList-meny](https://github.com/user-attachments/assets/5dc818b8-2cc6-44a0-aa01-f3db24f55e73)
+![TodoList-meny](https://github.com/user-attachments/assets/2c4553ad-b36a-4151-9043-ab28bfb93d27)
 
 Requirements
 
