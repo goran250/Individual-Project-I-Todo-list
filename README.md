@@ -6,7 +6,7 @@ The application will allow a user to create new tasks, assign them a title, desc
 project for the task to belong to.
 
 When the user is using the app, the user should be able to also edit, mark as done or remove tasks. They can also quit 
-and save the current task list to file, and then restart the application with the content of this file restored. The 
+and save the current task list to a json-file, and then restart the application with the content of this file restored. The 
 interface should look similar to the mockup below:
 
 ![TodoList-meny](https://github.com/user-attachments/assets/2c4553ad-b36a-4151-9043-ab28bfb93d27)
@@ -19,4 +19,4 @@ The solution must achieve the following requirements:
 * Display a collection of tasks that can be sorted both by date and project
 * Support the ability to add, edit, mark as done, and remove tasks
 * Support a text-based user interface
-* Load and save task list to file.
+* Load and save task list to a file.
