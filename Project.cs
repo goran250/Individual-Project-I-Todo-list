@@ -19,7 +19,6 @@ namespace Project_I_Todo_list
             ID = id;
             Name = name;
             TaskList = new List<Task>();
-
         }
     }
 }

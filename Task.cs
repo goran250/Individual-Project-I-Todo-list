@@ -17,17 +17,18 @@ namespace Project_I_Todo_list
 
         public Task() {}
 
-        public Task(int id,  string title, string description, DateTime dueDate, string status)
-		{
-			ID = id;
+        public Task(int id, string title, string description, DateTime dueDate, string status)
+        {
+            ID = id;
             Title = title;
 			Description = description;
 			DueDate = dueDate;
 			Status = status;
 		}
 
-        public Task(string title, string description, DateTime dueDate)
+        public Task(int id, string title, string description, DateTime dueDate)
         {
+            ID = id;
             Title = title;
             Description = description;
             DueDate = dueDate;

@@ -10,7 +10,6 @@ namespace Project_I_Todo_list
 
         static void Main(string[] args)
         {
-       
             projectHandler = new ProjectHandler();
             Start();
         }
@@ -19,7 +18,9 @@ namespace Project_I_Todo_list
         {
             // nbrOf contains three values. The first value is nbr of projects and the second value is nbr of
             // not done tasks, the third value is nbr of done tasks.
-            List<int> nbrOf = projectHandler.GetNbrOfProjectsAndTasksStatus(); 
+            List<int> nbrOf = projectHandler.GetNbrOfProjectsAndTasksStatus();
+
+            Console.SetWindowSize(150, 50);
 
             ColoredText.WriteLine("\n Welcome to this TodoList app", ConsoleColor.Yellow);
             Console.WriteLine("\n You have " + nbrOf[0].ToString() + " projects and a total nbr of " + nbrOf[1].ToString() + " tasks"); 
@@ -62,50 +63,70 @@ namespace Project_I_Todo_list
             ColoredText.Write("8", ConsoleColor.Magenta);
             Console.Write(") Save and Quit.");
 
-            
             Navigate();
         }
         private static void Navigate()
         {
-            Console.WriteLine();
-            Console.Write(" ");
-            string answer = Console.ReadLine();
-            
-            if (answer == "1")
+            Console.Write("\n ");
+            int answer = GetValidatedIntegerFromConsole();
+
+            if (answer == 1)
             {
-                projectHandler.ShowTaskList();
+                projectHandler.ShowTasks();
             }
-            else if (answer == "2")
+            else if (answer == 2)
             {
                 projectHandler.AddNewProject();
             }
-            else if (answer == "3")
+            else if (answer == 3)
             {
                 projectHandler.EditAProject();
             }
-            else if (answer == "4")
+            else if (answer == 4)
             {
                 projectHandler.RemoveAProject();
             }
-            else if (answer == "5")
+            else if (answer == 5)
             {
                 projectHandler.AddNewTask();
             }
-            else if (answer == "6")
+            else if (answer == 6)
             {
                 projectHandler.EditATask();
             }
-            else if (answer == "7")
+            else if (answer == 7)
             {
                 projectHandler.RemoveATask();
             }
-            else if (answer == "8")
+            else if (answer == 8)
             {
                 projectHandler.SaveFile();
                 System.Environment.Exit(0);
             }
             
             ShowMenu();
+        }
+
+        private static int GetValidatedIntegerFromConsole()
+        {
+            bool isValidInteger;
+            int index;
+            do
+            {
+                isValidInteger = int.TryParse(Console.ReadLine(), out index);
+
+                if (isValidInteger == false)
+                {
+                    ColoredText.WriteLine("Number can only contain digits and can't be empty.", ConsoleColor.Red);
+                }
+                else if (index < 1 || index > 8)
+                {
+                    ColoredText.WriteLine(" Number must be non-negative and higher than zero and lower than 9.", ConsoleColor.Red);
+                    isValidInteger = false;
+                }
+            } while (isValidInteger == false);
+
+            return index;
         }
 
     }
