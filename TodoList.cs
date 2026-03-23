@@ -1,114 +1,113 @@
-﻿// using Newtonsoft.Json.Linq;
-using System.Text.Json;
-using System;
+﻿
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Net.Http.Headers;
+using System.Runtime.InteropServices;
 
 namespace Project_I_Todo_list
 {
-	public class TodoList
-	{
-        ProjectHandler projectHandler;
+    internal class TodoList
+    {
+        private static ProjectHandler projectHandler {  get; set; }
 
-        public TodoList()
-		{
+        static void Main(string[] args)
+        {
+       
             projectHandler = new ProjectHandler();
-            GetDataFromFile();
+            Start();
+        }
+        
+        private static void Start()
+        {
+            // nbrOf contains three values. The first value is nbr of projects and the second value is nbr of
+            // not done tasks, the third value is nbr of done tasks.
+            List<int> nbrOf = projectHandler.GetNbrOfProjectsAndTasksStatus(); 
+
+            ColoredText.WriteLine("\n Welcome to this TodoList app", ConsoleColor.Yellow);
+            Console.WriteLine("\n You have " + nbrOf[0].ToString() + " projects and a total nbr of " + nbrOf[1].ToString() + " tasks"); 
+            Console.WriteLine(" to be done, and " + nbrOf[2].ToString() + " tasks that are done.");
+
+            ShowMenu();
+        }
+        private static void ShowMenu()
+        {
+            Console.WriteLine("\n Pick an option:");
+
+            Console.Write("\n (");
+            ColoredText.Write("1", ConsoleColor.Magenta);
+            Console.Write(") Show Task list, sorted by project or due date.");
+
+            Console.Write("\n (");
+            ColoredText.Write("2", ConsoleColor.Magenta);
+            Console.Write(") Add a new project.");
+
+            Console.Write("\n (");
+            ColoredText.Write("3", ConsoleColor.Magenta);
+            Console.Write(") Edit a project.");
+            Console.Write("\n (");
+            ColoredText.Write("4", ConsoleColor.Magenta);
+            Console.Write(") Remove a project");
+
+            Console.Write("\n (");
+            ColoredText.Write("5", ConsoleColor.Magenta);
+            Console.Write(") Add a new Task.");
+
+            Console.Write("\n (");
+            ColoredText.Write("6", ConsoleColor.Magenta);
+            Console.Write(") Edit a Task (update or mark as done.");
+
+            Console.Write("\n (");
+            ColoredText.Write("7", ConsoleColor.Magenta);
+            Console.Write(") Remove a task.");
+
+            Console.Write("\n (");
+            ColoredText.Write("8", ConsoleColor.Magenta);
+            Console.Write(") Save and Quit.");
 
             
-
-            projectHandler.ProjectsList.AddRange(CreateSampleList());
-
+            Navigate();
         }
-
-        private void GetDataFromFile()
-		{
-
-            // filePath = "/Programutveckling/IT Påbyggnad Programmering AI/Individual-Project-I-Todo-list/projects.json";
-            // string filePath = "/Programmering/IT Påbyggnad Programmering AI/Individual-Project-I-Todo-list/projects.json";
-            string filePath = Environment.CurrentDirectory + "\\projects.json";
-
-
-            try
-            {
-                // Read the entire content of the JSON file into a string
-                var json = File.ReadAllText(filePath);
-                projectHandler.ProjectsList = JsonSerializer.Deserialize<List<Project>>(json);
-                // TaskList.tasks = JsonSerializer.Deserialize<List<Task>>(jsonString);
-                
-            }
-            catch (Exception)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Failed to open saved Projects List\n");
-            }
-
-            // var data = JObject.Parse(json);
-            Console.WriteLine("Parsed JSON data:");
-            // Console.WriteLine(projectHandler.ProjectsList.ToString());
-
-        }
-
-        public static List<Project> CreateSampleList()
+        private static void Navigate()
         {
-            //Create a populated list of tasks
-            List<Project> projectsList = new List<Project>();
-
-            Project project = new Project("My_personal_tasklist");
-            project.TaskList.AddRange(
-               [
-                    new Task("Morning task 1/4", "Buy breakfast", new DateTime(2026,04,01), "Finished"),
-                    new Task("Midday task 1/4", "Buy lunch", new DateTime(2026,04,01), "Not finished"),
-                    new Task("Car washing 1/4", "Wash the boss car",new DateTime(2026,04,01), "Not finished"),
-                    new Task("Afternoon task 1/4", "Buy coffey", new DateTime(2026,04,01), "Not finished"),
-                    new Task("Morning task 2/4", "Buy breakfast", new DateTime(2026,04,02), "Finished"),
-                    new Task("Midday task 2/4", "Buy lunch", new DateTime(2026,04,02), "Not finished"),
-                    new Task("Car washing 2/4", "Wash my own car", new DateTime(2026,04,02), "Not finished"),
-                    new Task("Afternoon task 2/4", "Buy coffey", new DateTime(2026,04,02), "Not finished")
-               ]);
-
-            projectsList.Add(project);
-
-
-            project = new Project("Project_One");
-            project.TaskList.AddRange(
-               [
-                   new Task("Programming", "Do this projects coding", new DateTime(2026,04,01), "Not finished"),
-                   new Task("Testing", "Test this projects code", new DateTime(2026,04,01), "Not finished"),
-                   new Task("Deploying", "Deploying this project code",new DateTime(2026,04,01), "Not finished")
-               ]);
-
-            projectsList.Add(project);
-
-            project = new Project("Project_Two");
-            project.TaskList.AddRange(
-               [
-                   new Task("Programming", "Do this projects coding startdate 2026-04-02", new DateTime(2026,04,04), "Not finished"),
-                   new Task("Testing", "Test this projects code", new DateTime(2026,04,05), "Not finished"),
-                   new Task("Deploying", "Deploying this project code", new DateTime(2026,04,06), "Not finished")
-               ]);
-
-            projectsList.Add(project);
-
-            project = new Project("Project_Three");
-            project.TaskList.AddRange(
-               [
-                   new Task("Programming", "Do this projects coding startdate 2026-04-09", new DateTime(2026,04,11), "Not finished"),
-                   new Task("Testing", "Test this projects code", new DateTime(2026,04,11), "Not finished"),
-                   new Task("Deploying", "Deploying this project code", new DateTime(2026,04,12), "Not finished")
-               ]);
+            Console.WriteLine();
+            Console.Write(" ");
+            string answer = Console.ReadLine();
             
-            projectsList.Add(project);
-
-            return projectsList;
-        }
-
-           
-        public void ShowTasklist()
-        {
-            Console.WriteLine("Projects");
+            if (answer == "1")
+            {
+                projectHandler.ShowTaskList();
+            }
+            else if (answer == "2")
+            {
+                projectHandler.AddNewProject();
+            }
+            else if (answer == "3")
+            {
+                projectHandler.EditAProject();
+            }
+            else if (answer == "4")
+            {
+                projectHandler.RemoveAProject();
+            }
+            else if (answer == "5")
+            {
+                projectHandler.AddNewTask();
+            }
+            else if (answer == "6")
+            {
+                projectHandler.EditATask();
+            }
+            else if (answer == "7")
+            {
+                projectHandler.RemoveATask();
+            }
+            else if (answer == "8")
+            {
+                projectHandler.SaveFile();
+                System.Environment.Exit(0);
+            }
+            
+            ShowMenu();
         }
 
     }
+
 }
