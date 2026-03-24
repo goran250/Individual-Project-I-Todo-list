@@ -281,7 +281,32 @@ namespace Project_I_Todo_list
 
         public void RemoveATask()
         {
-            ColoredText.WriteLine("RemoveATask", ConsoleColor.Green);
+            ColoredText.WriteLine("\n Enter the line number for the task you want to remove", ConsoleColor.Yellow);
+            int nbrOfTasks = ShowTaskList(false, true);
+            int min = 1;
+            int max = nbrOfTasks;
+            int index = GetValidatedIntegerFromConsole("Number", "higher than zero and lower than " + (max + 1), min, max);
+            
+            int taskID = taskList[index - 1].ID;
+            string taskTitle = taskList[index - 1].Title;
+
+            // Remove the task from the projectsList
+            foreach (Project project in ProjectsList)
+            {
+                int i = 0;
+                bool found = false;
+                while (!found)  
+                { 
+                    if (project.TaskList[i].ID == taskID)
+                    {
+                        project.TaskList.RemoveAt(i);
+                        found = true;
+                    }
+                   
+                    i++;
+                }
+            }
+            ColoredText.WriteLine("\n The task " + taskTitle + " has been removed", ConsoleColor.Yellow);
         }
 
 
