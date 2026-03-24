@@ -5,13 +5,13 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text.Json;
+using System.Xml.Linq;
 
 namespace Project_I_Todo_list
 {
 	public class ProjectHandler
 	{
 		public List<Project> ProjectsList { get; set; }
-        private List<Task> taskList;
         private static int nextProjectID;
         private static int nextTaskID;
 
@@ -32,6 +32,22 @@ namespace Project_I_Todo_list
                 SaveFile();
             }
         }
+
+        public void SaveFile()
+        {
+            //Tries to save the list in a JSON file
+            try
+            {
+                string json = JsonSerializer.Serialize(ProjectsList);
+                File.WriteAllText(FilePath, json);
+                Console.WriteLine("Your TodoList has been saved");
+            }
+            catch (Exception)
+            {
+                ColoredText.WriteLine("Failed to save TodoList!", ConsoleColor.Red);
+            }
+        }
+
 
         // Returns an integer list with 3 values. The first value is nbr of projects and the second value is nbr of
         // tasks not done, the third value is nbr of tasks done .
@@ -66,6 +82,7 @@ namespace Project_I_Todo_list
             return nbrOf;
         }
 
+
         public void ShowTasks()
         {
             Console.WriteLine("\n Do you want to see the tasklist sorted by project or by due date.");
@@ -80,7 +97,7 @@ namespace Project_I_Todo_list
             Console.Write("\n ");
             int min = 1;
             int max = 2;
-            int answer = GetValidatedIntegerFromConsole("Number", "higher than zero and lower than 3", min, max);
+            int answer = GetValidatedIntFromConsole("Number", min, max);
 
             if (answer == 1)
                 ShowTaskListByProject();
@@ -88,19 +105,128 @@ namespace Project_I_Todo_list
                 ShowTaskList(true, false);
         }
 
-        public void SaveFile()
+
+        public void AddNewProject()
         {
-            //Tries to save the list in a JSON file
-            try
-            {
-                string json = JsonSerializer.Serialize(ProjectsList);
-                File.WriteAllText(FilePath, json);
-                Console.WriteLine("Your TodoList has been saved");
+            ColoredText.WriteLine("\n To enter a new project - Follow the steps\n",ConsoleColor.Yellow);
+
+            string name = GetValidatedStringFromConsole("Project name");
+            nextProjectID++;
+            Project project = new Project(nextProjectID, name);
+            ProjectsList.Add(project);
+        }
+
+
+        public void EditAProject()
+        {
+            ColoredText.WriteLine("\n Enter the line number for the project you want to edit", ConsoleColor.Yellow);
+            ShowProjects();
+            int min = 1;
+            int max = ProjectsList.Count;
+            int index = GetValidatedIntFromConsole("Number", min, max );
+            ProjectsList[index - 1].Name = GetValidatedStringFromConsole("Project name");
+        }
+
+
+        public void RemoveAProject()
+        {
+            ColoredText.WriteLine("\n Enter the line number for the project you want to remove", ConsoleColor.Yellow);
+            ShowProjects();
+            int min = 1;
+            int max = ProjectsList.Count;
+            int index = GetValidatedIntFromConsole("Number", min, max);
+            
+            ColoredText.WriteLine("\n " + ProjectsList[index-1].Name + " has been removed", ConsoleColor.Yellow);
+            ProjectsList.RemoveAt(index-1);
+        }
+
+
+        public void AddNewTask()
+        {
+            ColoredText.WriteLine("\n Enter a new task. Start by selecting a project:", ConsoleColor.Yellow);
+
+            ColoredText.WriteLine("\n Enter the line number for the project the task should belong to", ConsoleColor.Yellow);
+            ShowProjects();
+            int min = 1;
+            int max = ProjectsList.Count;
+            int projectIndex = GetValidatedIntFromConsole("Number", min, max);
+
+            ColoredText.WriteLine("\n To enter a task - Follow the steps", ConsoleColor.Yellow);
+
+            string title = GetValidatedStringFromConsole("Title");
+
+            string description = GetValidatedStringFromConsole("Description");
+
+            string dateStr = GetValidatedDateFromConsole(true);
+            DateTime dueDate = DateTime.Parse(dateStr);
+
+            string status = GetValidatedStatusFromConsole(true);
+            
+            Task task = new Task(nextTaskID++, title, description, dueDate, status);
+            ProjectsList[projectIndex - 1].TaskList.Add(task);
+
+            ColoredText.WriteLine("\n A new task has been added to the project " + ProjectsList[projectIndex - 1].Name, ConsoleColor.Yellow);
+        }
+
+
+        public void EditATask()
+        {
+            ColoredText.WriteLine("\n Enter the line number for the task you want to edit", ConsoleColor.Yellow);
+            List<Task> taskList = ShowTaskList(false, true);
+            int min = 1;
+            int max = taskList.Count;
+            int index = GetValidatedIntFromConsole("Number", min, max);
+
+            ColoredText.WriteLine("\n Enter a new values. Just press enter if you do not want to change the value.", ConsoleColor.Yellow);
+            
+            Console.Write("\n Enter a new Title: ");
+            string title = Console.ReadLine();
+            if (String.IsNullOrEmpty(title) == false)
+                taskList[index - 1].Title = title;
+
+            Console.Write("\n Enter a new Description: ");
+            string description = Console.ReadLine();
+            if (String.IsNullOrEmpty(description) == false)
+                taskList[index - 1].Description = description;
+
+            string dateStr = GetValidatedDateFromConsole(false);
+            if (dateStr != null){
+                DateTime dueDate = DateTime.Parse(dateStr);
+                taskList[index - 1].DueDate = dueDate;
             }
-            catch (Exception)
+
+            string status = GetValidatedStatusFromConsole(false);
+            if (String.IsNullOrEmpty(status) == false)
+                taskList[index - 1].Status = status;
+
+            UpdateATaskInProjectsList(taskList, index - 1);
+        }
+
+
+        public void RemoveATask()
+        {
+            ColoredText.WriteLine("\n Enter the line number for the task you want to remove", ConsoleColor.Yellow);
+            List<Task> taskList = ShowTaskList(false, true); 
+            int min = 1;
+            int max = taskList.Count;
+            int index = GetValidatedIntFromConsole("Number", min, max);
+            
+            int taskID = taskList[index - 1].ID;
+            string taskTitle = taskList[index - 1].Title;
+
+            // Remove the task from the projectsList
+            foreach (Project project in ProjectsList)
             {
-                Console.WriteLine("Failed to save TodoList!");
+                for (int i = 0; i < project.TaskList.Count; i++) 
+                { 
+                    if (project.TaskList[i].ID == taskID)
+                    {
+                        project.TaskList.RemoveAt(i);
+                        continue;
+                    }
+                }
             }
+            ColoredText.WriteLine("\n The task " + taskTitle + " has been removed", ConsoleColor.Yellow);
         }
 
         private void ShowTaskListByProject()
@@ -109,7 +235,7 @@ namespace Project_I_Todo_list
             int descriptionLength = GetLongestTextLengthForDescription() + 3;
             int dueDateLength = 10 + 3;
             int statusLength = 12 + 3;
-               
+
             ColoredText.WriteLine("\n Tasks by project:", ConsoleColor.Magenta);
 
             foreach (Project project in ProjectsList)
@@ -121,40 +247,28 @@ namespace Project_I_Todo_list
 
                 ColoredText.WriteLine("\n\n Tasklist:\n", ConsoleColor.Green);
 
-                ColoredText.WriteLine(" Title".PadRight(titleLength) + " Description".PadRight(descriptionLength) + " Due Date".PadRight(dueDateLength) + " Status".PadRight(statusLength), ConsoleColor.Green);
+                ColoredText.Write(" Title".PadRight(titleLength) + " Description".PadRight(descriptionLength), ConsoleColor.Green);
+                ColoredText.WriteLine(" Due Date".PadRight(dueDateLength) + " Status".PadRight(statusLength), ConsoleColor.Green);
 
-                if (project.TaskList.Count >= 1)
+                if (project.TaskList.Count > 0)
                 {
                     foreach (Task task in project.TaskList)
                     {
-                        Console.WriteLine(" " + task.Title.PadRight(titleLength) + task.Description.PadRight(descriptionLength) + task.DueDate.ToShortDateString().PadRight(dueDateLength) + task.Status.PadRight(statusLength));
+                        Console.Write(" " + task.Title.PadRight(titleLength) + task.Description.PadRight(descriptionLength));
+                        Console.WriteLine(task.DueDate.ToShortDateString().PadRight(dueDateLength) + task.Status.PadRight(statusLength));
                     }
                 }
                 else
                 {
-                    Console.WriteLine(" No tasks are added to this list!");
+                    ColoredText.WriteLine(" No tasks are added to this project!", ConsoleColor.Red);
                 }
-            
             }
 
             Console.WriteLine("\n----------------------------------------------------------------------------------------------");
         }
 
-        private void ShowProjects()
-        {
-            Console.WriteLine("\n----------------------------------------------------------------------------------------------");
-            ColoredText.WriteLine("\n    " + "Project name", ConsoleColor.Green);
 
-           
-            for (int i = 0; i < ProjectsList.Count; i++)
-            {
-                Console.WriteLine("\n " + (i+1) + ". " + ProjectsList[i].Name);
-            }
-
-            Console.WriteLine("\n----------------------------------------------------------------------------------------------");
-        }
-
-        private int ShowTaskList(bool sortedByDate, bool showLineNumbers)
+        private List<Task> ShowTaskList(bool sortedByDate, bool showLineNumbers)
         {
             int projectNameLength = GetLongestTextLengthForProjectName() + 3;
             int titleLength = GetLongestTextLengthForTitle() + 3;
@@ -162,7 +276,8 @@ namespace Project_I_Todo_list
             int dueDateLength = 10 + 3;
             int statusLength = 12 + 3;
 
-            taskList = new List<Task>(); 
+            //Create a list with only tasks no projects
+            List<Task> taskList = new List<Task>();
 
             foreach (Project project in ProjectsList)
             {
@@ -183,132 +298,47 @@ namespace Project_I_Todo_list
                 ColoredText.WriteLine("\n Tasklist:\n", ConsoleColor.Yellow);
             }
 
+            string firstString = " ";
             string lineNumber = " ";
             if (showLineNumbers)
-                lineNumber = lineNumber.PadRight(6);
-            
-            ColoredText.Write(lineNumber + "Project".PadRight(projectNameLength) + "Title".PadRight(titleLength), ConsoleColor.Green);
+                firstString = lineNumber.PadRight(6);
+
+            ColoredText.Write(firstString + "Project".PadRight(projectNameLength) + "Title".PadRight(titleLength), ConsoleColor.Green);
             ColoredText.WriteLine("Description".PadRight(descrLength) + "Due Date".PadRight(dueDateLength) + "Status".PadRight(statusLength), ConsoleColor.Green);
 
-            lineNumber = " ";
-            
-            for (int i = 1;  i <= taskList.Count; i++)
+            firstString = " ";
+
+            for (int i = 1; i <= taskList.Count; i++)
             {
-                
-                Task task = taskList[i-1];
+
+                Task task = taskList[i - 1];
                 if (showLineNumbers)
                 {
-                   lineNumber = " " + i + ". ";
-                   lineNumber = lineNumber.PadRight(6);
+                    lineNumber = " " + i + ". ";
+                    firstString = lineNumber.PadRight(6);
                 }
 
-                Console.Write(lineNumber + task.ProjectName.PadRight(projectNameLength), ConsoleColor.Green);
+                Console.Write(firstString + task.ProjectName.PadRight(projectNameLength), ConsoleColor.Green);
                 Console.Write(task.Title.PadRight(titleLength) + task.Description.PadRight(descrLength), ConsoleColor.Green);
                 Console.WriteLine(task.DueDate.ToShortDateString().PadRight(dueDateLength) + task.Status.PadRight(statusLength), ConsoleColor.Green);
             }
 
-            return taskList.Count;
+            return taskList;
         }
 
-        public void AddNewProject()
+        private void ShowProjects()
         {
-            ColoredText.WriteLine("\n To enter a new project - Follow the steps\n",ConsoleColor.Yellow);
+            Console.WriteLine("\n----------------------------------------------------------------------------------------------");
+            ColoredText.WriteLine("\n    " + "Project name", ConsoleColor.Green);
 
-            string name = GetValidatedStringFromConsole("Project name");
-            nextProjectID++;
-            Project project = new Project(nextProjectID, name);
-            ProjectsList.Add(project);
-        }
 
-        public void EditAProject()
-        {
-            ColoredText.WriteLine("\n Enter the line number for the project you want to edit", ConsoleColor.Yellow);
-            ShowProjects();
-            int min = 1;
-            int max = ProjectsList.Count;
-            int index = GetValidatedIntegerFromConsole("Number", "higher than zero and lower than " + (max + 1), min, max );
-            ProjectsList[index - 1].Name = GetValidatedStringFromConsole("Project name");
-        }
-
-        public void RemoveAProject()
-        {
-            ColoredText.WriteLine("\n Enter the line number for the project you want to remove", ConsoleColor.Yellow);
-            ShowProjects();
-            int min = 1;
-            int max = ProjectsList.Count;
-            int index = GetValidatedIntegerFromConsole("Number", "higher than zero and lower than " + (max + 1), min, max);
-            
-            ColoredText.WriteLine("\n " + ProjectsList[index].Name + " has been removed", ConsoleColor.Yellow);
-            ProjectsList.RemoveAt(index-1);
-        }
-        public void AddNewTask()
-        {
-            ColoredText.WriteLine("AddNewTask", ConsoleColor.Green);
-        }
-
-        public void EditATask()
-        {
-            ColoredText.WriteLine("\n Enter the line number for the task you want to edit", ConsoleColor.Yellow);
-            int nbrOfTasks = ShowTaskList(false, true);
-            int min = 1;
-            int max = nbrOfTasks;
-            int index = GetValidatedIntegerFromConsole("Number", "higher than zero and lower than " + (max + 1), min, max);
-
-            ColoredText.WriteLine("\n Enter a new values. Just press enter if you do not want to change the value.", ConsoleColor.Yellow);
-            
-            Console.Write("\n Enter a new Title: ");
-            string title = Console.ReadLine();
-            if (String.IsNullOrEmpty(title) == false)
-                taskList[index - 1].Title = title;
-
-            Console.Write("\n Enter a new Description: ");
-            string description = Console.ReadLine();
-            if (String.IsNullOrEmpty(description) == false)
-                taskList[index - 1].Description = description;
-
-            string dateStr = GetValidatedDateFromConsole();
-            if (dateStr != null){
-                DateTime dueDate = DateTime.Parse(dateStr);
-                taskList[index - 1].DueDate = dueDate;
-            }
-
-            string status = GetValidatedStatusFromConsole();
-            if (String.IsNullOrEmpty(status) == false)
-                taskList[index - 1].Status = status;
-
-            UpdateProjectsList(taskList, index - 1);
-        }
-
-        public void RemoveATask()
-        {
-            ColoredText.WriteLine("\n Enter the line number for the task you want to remove", ConsoleColor.Yellow);
-            int nbrOfTasks = ShowTaskList(false, true);
-            int min = 1;
-            int max = nbrOfTasks;
-            int index = GetValidatedIntegerFromConsole("Number", "higher than zero and lower than " + (max + 1), min, max);
-            
-            int taskID = taskList[index - 1].ID;
-            string taskTitle = taskList[index - 1].Title;
-
-            // Remove the task from the projectsList
-            foreach (Project project in ProjectsList)
+            for (int i = 0; i < ProjectsList.Count; i++)
             {
-                int i = 0;
-                bool found = false;
-                while (!found)  
-                { 
-                    if (project.TaskList[i].ID == taskID)
-                    {
-                        project.TaskList.RemoveAt(i);
-                        found = true;
-                    }
-                   
-                    i++;
-                }
+                Console.WriteLine("\n " + (i + 1) + ". " + ProjectsList[i].Name);
             }
-            ColoredText.WriteLine("\n The task " + taskTitle + " has been removed", ConsoleColor.Yellow);
-        }
 
+            Console.WriteLine("\n----------------------------------------------------------------------------------------------");
+        }
 
         // Gets a atring from the console and validates it so its not empty.
         private string GetValidatedStringFromConsole(string variableName)
@@ -327,7 +357,7 @@ namespace Project_I_Todo_list
             return result;
         }
 
-        private int GetValidatedIntegerFromConsole(string variableName, string higherAndLowerThanText, int min, int max)
+        public int GetValidatedIntFromConsole(string variableName, int min, int max)
         {
             bool isValidInteger;
             int index;
@@ -342,7 +372,7 @@ namespace Project_I_Todo_list
                 }
                 else if (index < min || index > max)
                 {
-                    ColoredText.WriteLine(" " + variableName + " must be non-negative and " + higherAndLowerThanText + ".", ConsoleColor.Red);
+                    ColoredText.WriteLine(" " + variableName + " must be non-negative and higher than zero and lower than " + (max + 1) + ".", ConsoleColor.Red);
                     isValidInteger = false;
                 }
             } while (isValidInteger == false);
@@ -350,35 +380,8 @@ namespace Project_I_Todo_list
             return index;
         }
 
-        // Gets a atring from the console and validates it so its not empty.
-        private string GetValidatedStatusFromConsole()
-        {
-            string result;
-            bool endLoop = false;
-            do
-            {
-                Console.Write("\n Enter a new Status: ");
-                result = Console.ReadLine();
-
-                if (String.IsNullOrEmpty(result))
-                {
-                    endLoop = true;
-                }
-                else if (result == "Not finished" || result == "Finished")
-                {
-                    endLoop = true;
-                }
-                else
-                {
-                    ColoredText.WriteLine(" You have not entered a valid status. Enter \"Not finished\" or \"Finished\"", ConsoleColor.Red);
-                }
-                
-            } while (!endLoop);
-
-            return result;
-        }
-
-        private string GetValidatedDateFromConsole()
+        // Thera are two cases, in the first case NullOrEmpty is allowed, in the second case its treated as an error.
+        private string GetValidatedDateFromConsole(bool checkNullOrEmpty)
         {
             bool isDate;
             string result;
@@ -387,15 +390,24 @@ namespace Project_I_Todo_list
                 Console.Write("\n Enter a new Due date: ");
                 result = Console.ReadLine();
 
-                if (String.IsNullOrEmpty(result))
+                if (!checkNullOrEmpty && String.IsNullOrEmpty(result))
                 {
                     return null;
                 }
-                isDate = DateTime.TryParse(result, out DateTime dueDate);
 
-                if (isDate == false)
+                else if (String.IsNullOrEmpty(result))
                 {
-                    ColoredText.WriteLine(" You have not entered a valid date.", ConsoleColor.Red);
+                    ColoredText.WriteLine(" You have entered an empty string for date.", ConsoleColor.Red);
+                    isDate = false;
+                }
+                else
+                {
+                    isDate = DateTime.TryParse(result, out DateTime dueDate);
+
+                    if (isDate == false)
+                    {
+                        ColoredText.WriteLine(" You have not entered a valid date.", ConsoleColor.Red);
+                    }
                 }
 
             } while (isDate == false);
@@ -403,7 +415,42 @@ namespace Project_I_Todo_list
             return result;
         }
 
-        // GetLongestTextLengthForTitle() finds the longest word for a given variable.
+        // 
+        // Thera are two cases, in the first case NullOrEmpty is allowed, in the second case its treated as an error.
+        private string GetValidatedStatusFromConsole(bool checkNullOrEmpty)
+        {
+            string result;
+            bool endLoop = false;
+            do
+            {
+                Console.Write("\n Enter a new Status: ");
+                result = Console.ReadLine();
+
+                if (!checkNullOrEmpty && String.IsNullOrEmpty(result))
+                {
+                    endLoop = true;
+                }
+                else if (result == "Not finished" || result == "Finished")
+                {
+                    endLoop = true;
+                }
+                else if (String.IsNullOrEmpty(result))
+                {
+                    ColoredText.WriteLine(" You have entered an empty string. Please enter a status", ConsoleColor.Red);
+                }
+                else
+                {
+                    ColoredText.WriteLine(" You have not entered a valid status. Please enter \"Not finished\" or \"Finished\"", ConsoleColor.Red);
+                }
+                
+            } while (!endLoop);
+
+            return result;
+        }
+
+       
+
+        // GetLongestTextLengthForTitle() finds the longest task.title.
         private int GetLongestTextLengthForTitle()
         {
             int textLength = "Title".Length; // 
@@ -421,10 +468,11 @@ namespace Project_I_Todo_list
 
             return textLength;
         }
-        
+
+        // GetLongestTextLengthForDescription() finds the longest task.description.
         private int GetLongestTextLengthForDescription()
         {
-            int textLength = "Description".Length; // 
+            int textLength = "Description".Length; // The header word maybee longest word so we initialize textLength with that.
 
             foreach (Project project in ProjectsList)
             {
@@ -440,9 +488,10 @@ namespace Project_I_Todo_list
             return textLength;
         }
 
+        // GetLongestTextLengthForProjectName() finds the longest project name.
         private int GetLongestTextLengthForProjectName()
         {
-            int textLength = "Project".Length; // 
+            int textLength = "Project".Length; // The header word maybee the longest word so we initialize textLength with that.
 
             foreach (Project project in ProjectsList)
             {
@@ -455,9 +504,10 @@ namespace Project_I_Todo_list
             return textLength;
         }
 
-        private void UpdateProjectsList(List<Task> taskList, int index)
+        private void UpdateATaskInProjectsList(List<Task> taskList, int index)
         {
             int taskID = taskList[index].ID;
+
             foreach (Project project in ProjectsList)
             {
                 foreach (Task task in project.TaskList)
@@ -482,27 +532,43 @@ namespace Project_I_Todo_list
                 var json = File.ReadAllText(FilePath);
                 ProjectsList = JsonSerializer.Deserialize<List<Project>>(json);
 
-                nextProjectID = ProjectsList.Count;
-                nextTaskID = ProjectsList[nextProjectID - 1].TaskList.Count;
+                nextProjectID = ProjectsList[ProjectsList.Count - 1].ID + 1;
+
+                //Create a list with only tasks no projects
+                List<Task> taskList = new List<Task>();
+
+                foreach (Project project in ProjectsList)
+                {
+                    foreach (Task task in project.TaskList)
+                    {
+                        task.ProjectName = project.Name;
+                        taskList.Add(task);
+                    }
+                }
+
+                taskList = taskList.OrderBy(t => t.ID).ToList();
+                
+                nextTaskID = taskList[taskList.Count - 1].ID + 1;
             }
             catch (Exception)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Failed to open saved Projects List\n");
+            {               
+                ColoredText.WriteLine(" Failed to open saved Projects List\n", ConsoleColor.Red);
             }
         }
 
 
-
+        // The first time the app is executed we create a Projects list with samle data. 
+        // In the next step the projects list is saved to a json-file. The next time
+        // the app is executed the json-file is loaded instead of sample-data. 
         private void CreateSampleList()
         {
             nextProjectID = 0;
-            Project project = new Project(nextProjectID, "My_personal_tasklist");
+            Project project = new Project(nextProjectID, "My personal tasklist");
             
             nextTaskID = 0;
 
             project.TaskList.AddRange(
-               [
+               [    // Av någon underlig anledning görs nextTaskID++ först efter att Task objektet skapats.
                     new Task(nextTaskID++, "Morning task 1/4", "Buy breakfast", new DateTime(2026,04,01), "Finished"),
                     new Task(nextTaskID++, "Midday task 1/4", "Buy lunch", new DateTime(2026,04,01), "Not finished"),
                     new Task(nextTaskID++, "Car washing 1/4", "Wash the boss car",new DateTime(2026,04,01), "Not finished"),
@@ -516,36 +582,40 @@ namespace Project_I_Todo_list
             ProjectsList.Add(project);
 
             nextProjectID++;
-            project = new Project(nextProjectID, "Project_One");
+            project = new Project(nextProjectID, "Project One");
             project.TaskList.AddRange(
                [
                    new Task(nextTaskID++, "Programming", "Do this projects coding", new DateTime(2026,04,01), "Not finished"),
                    new Task(nextTaskID++, "Testing", "Test this projects code", new DateTime(2026,04,01), "Not finished"),
-                   new Task(nextTaskID++, "Deploying", "Deploying this project code",new DateTime(2026,04,01), "Not finished")
+                   new Task(nextTaskID++, "Deploying", "Deploy this project code",new DateTime(2026,04,01), "Not finished")
                ]);
 
             ProjectsList.Add(project);
 
             nextProjectID++;
-            project = new Project(nextProjectID, "Project_Two");
+            project = new Project(nextProjectID, "Project Two");
             project.TaskList.AddRange(
                [
-                   new Task(nextTaskID++, "Programming", "Do this projects coding startdate 2026-04-02", new DateTime(2026,04,04), "Not finished"),
+                   new Task(nextTaskID++, "Programming", "Do this projects coding. Startdate 2026-04-02", new DateTime(2026,04,04), "Not finished"),
                    new Task(nextTaskID++, "Testing", "Test this projects code", new DateTime(2026,04,05), "Not finished"),
-                   new Task(nextTaskID++, "Deploying", "Deploying this project code", new DateTime(2026,04,06), "Not finished")
+                   new Task(nextTaskID++, "Deploying", "Deploy this project code", new DateTime(2026,04,06), "Not finished")
                ]);
 
             ProjectsList.Add(project);
 
             nextProjectID++;
-            project = new Project(nextProjectID, "Project_Three");
+            project = new Project(nextProjectID, "Project Three");
             project.TaskList.AddRange(
                [
-                   new Task(nextTaskID++, "Programming", "Do this projects coding startdate 2026-04-09", new DateTime(2026,04,11), "Not finished"),
+                   new Task(nextTaskID++, "Programming", "Do this projects coding. Startdate 2026-04-09", new DateTime(2026,04,11), "Not finished"),
                    new Task(nextTaskID++, "Testing", "Test this projects code", new DateTime(2026,04,11), "Not finished"),
-                   new Task(nextTaskID++, "Deploying", "Deploying this project code", new DateTime(2026,04,12), "Not finished")
+                   new Task(nextTaskID++, "Deploying", "Deploy this project code", new DateTime(2026,04,12), "Not finished")
                ]);
 
+            ProjectsList.Add(project);
+
+            nextProjectID++;
+            project = new Project(nextProjectID, "Project Four");
             ProjectsList.Add(project);
         }
     }

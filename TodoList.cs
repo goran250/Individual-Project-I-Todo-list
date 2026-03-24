@@ -30,37 +30,37 @@ namespace Project_I_Todo_list
         }
         private static void ShowMenu()
         {
-            Console.WriteLine("\n Pick an option:");
+            ColoredText.WriteLine("\n Pick an option:", ConsoleColor.Yellow);
 
             Console.Write("\n (");
-            ColoredText.Write("1", ConsoleColor.Magenta);
+            ColoredText.Write("1", ConsoleColor.Yellow);
             Console.Write(") Show Task list, sorted by project or due date.");
 
             Console.Write("\n (");
-            ColoredText.Write("2", ConsoleColor.Magenta);
+            ColoredText.Write("2", ConsoleColor.Yellow);
             Console.Write(") Add a new project.");
 
             Console.Write("\n (");
-            ColoredText.Write("3", ConsoleColor.Magenta);
+            ColoredText.Write("3", ConsoleColor.Yellow);
             Console.Write(") Edit a project.");
             Console.Write("\n (");
-            ColoredText.Write("4", ConsoleColor.Magenta);
+            ColoredText.Write("4", ConsoleColor.Yellow);
             Console.Write(") Remove a project");
 
             Console.Write("\n (");
-            ColoredText.Write("5", ConsoleColor.Magenta);
+            ColoredText.Write("5", ConsoleColor.Yellow);
             Console.Write(") Add a new Task.");
 
             Console.Write("\n (");
-            ColoredText.Write("6", ConsoleColor.Magenta);
+            ColoredText.Write("6", ConsoleColor.Yellow);
             Console.Write(") Edit a Task (update or mark as done.");
 
             Console.Write("\n (");
-            ColoredText.Write("7", ConsoleColor.Magenta);
+            ColoredText.Write("7", ConsoleColor.Yellow);
             Console.Write(") Remove a task.");
 
             Console.Write("\n (");
-            ColoredText.Write("8", ConsoleColor.Magenta);
+            ColoredText.Write("8", ConsoleColor.Yellow);
             Console.Write(") Save and Quit.");
 
             Navigate();
@@ -68,67 +68,40 @@ namespace Project_I_Todo_list
         private static void Navigate()
         {
             Console.Write("\n ");
-            int answer = GetValidatedIntegerFromConsole();
+            int min = 1;
+            int max = 8;
+            int answer = projectHandler.GetValidatedIntFromConsole("Number", min, max);
 
-            if (answer == 1)
-            {
-                projectHandler.ShowTasks();
-            }
-            else if (answer == 2)
-            {
-                projectHandler.AddNewProject();
-            }
-            else if (answer == 3)
-            {
-                projectHandler.EditAProject();
-            }
-            else if (answer == 4)
-            {
-                projectHandler.RemoveAProject();
-            }
-            else if (answer == 5)
-            {
-                projectHandler.AddNewTask();
-            }
-            else if (answer == 6)
-            {
-                projectHandler.EditATask();
-            }
-            else if (answer == 7)
-            {
-                projectHandler.RemoveATask();
-            }
-            else if (answer == 8)
-            {
-                projectHandler.SaveFile();
-                System.Environment.Exit(0);
+            switch (answer)
+            { 
+                case 1:
+                    projectHandler.ShowTasks();
+                    break;
+                case 2:
+                    projectHandler.AddNewProject();
+                    break;
+                case 3:
+                    projectHandler.EditAProject();
+                    break;
+                case 4:
+                    projectHandler.RemoveAProject();
+                    break;
+                case 5:
+                    projectHandler.AddNewTask();
+                    break;
+                case 6:                    
+                    projectHandler.EditATask();
+                    break;
+                case 7:
+                    projectHandler.RemoveATask();
+                    break;
+                case 8:
+                    projectHandler.SaveFile();
+                    System.Environment.Exit(0);
+                    break;
             }
             
             ShowMenu();
         }
-
-        private static int GetValidatedIntegerFromConsole()
-        {
-            bool isValidInteger;
-            int index;
-            do
-            {
-                isValidInteger = int.TryParse(Console.ReadLine(), out index);
-
-                if (isValidInteger == false)
-                {
-                    ColoredText.WriteLine("Number can only contain digits and can't be empty.", ConsoleColor.Red);
-                }
-                else if (index < 1 || index > 8)
-                {
-                    ColoredText.WriteLine(" Number must be non-negative and higher than zero and lower than 9.", ConsoleColor.Red);
-                    isValidInteger = false;
-                }
-            } while (isValidInteger == false);
-
-            return index;
-        }
-
     }
-
 }
