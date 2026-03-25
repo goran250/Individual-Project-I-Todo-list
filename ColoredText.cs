@@ -6,16 +6,16 @@ namespace Project_I_Todo_list
 {
     public static class ColoredText
     {
-        public static void WriteLine(string text, ConsoleColor Color)
+        public static void WriteLine(string text, ConsoleColor color)
         {
-            Console.ForegroundColor = Color;
+            Console.ForegroundColor = color;
             Console.WriteLine(text);
             Console.ResetColor();
         }
 
-        public static void Write(string text, ConsoleColor Color)
+        public static void Write(string text, ConsoleColor color)
         {
-            Console.ForegroundColor = Color;
+            Console.ForegroundColor = color;
             Console.Write(text);
             Console.ResetColor();
         }
