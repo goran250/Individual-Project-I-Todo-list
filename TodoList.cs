@@ -8,7 +8,7 @@ namespace Project_I_Todo_list
     {
         private static ProjectHandler projectHandler {  get; set; }
 
-        static void Main(string[] args)
+        static void Main(string[] args) 
         {
             projectHandler = new ProjectHandler();
             Start();
