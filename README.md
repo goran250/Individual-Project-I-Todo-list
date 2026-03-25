@@ -10,7 +10,9 @@ list edit and remove projects.The user can also quit and save the current projec
 and then restart the application with the content of this file restored. The interface looks similar to the 
 mockup below:
 
+
 <img width="1238" height="630" alt="image" src="https://github.com/user-attachments/assets/05b64bd7-6300-4bfb-8ca7-59546e71f39b" />
+
 
 Requirements
 
