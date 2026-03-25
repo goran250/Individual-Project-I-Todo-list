@@ -11,7 +11,7 @@ and then restart the application with the content of this file restored. The int
 mockup below:
 
 
-<img width="1238" height="630" alt="image" src="https://github.com/user-attachments/assets/05b64bd7-6300-4bfb-8ca7-59546e71f39b" />
+<img width="1200" height="611" alt="image" src="https://github.com/user-attachments/assets/05b64bd7-6300-4bfb-8ca7-59546e71f39b" />
 
 
 Requirements
