@@ -15,7 +15,7 @@ mockup below:
 The solution achieves the following requirements:
 
 * Model projects with a name.
-* Model tasks with a title, description, due date, status andm what project they belong to.
+* Model tasks with a title, description, due date, status and what project they belong to.
 * Display a collection of tasks that can be sorted both by date and project
 * Support the ability to add, edit, and remove projects.
 * Support the ability to add, edit (including mark as done), and remove tasks.
