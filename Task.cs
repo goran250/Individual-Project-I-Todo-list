@@ -13,8 +13,6 @@ namespace Project_I_Todo_list
         public DateTime DueDate { get; set; }
 		public string Status { get; set; }
         
-
-
         public Task() {}
 
         public Task(int id, string title, string description, DateTime dueDate, string status)

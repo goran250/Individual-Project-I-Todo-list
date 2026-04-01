@@ -68,6 +68,7 @@ namespace Project_I_Todo_list
 
             Navigate();
         }
+
         private static void Navigate()
         {
             Console.Write("\n ");
