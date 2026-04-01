@@ -28,6 +28,8 @@ namespace Project_I_Todo_list
 
             ShowMenu();
         }
+
+
         private static void ShowMenu()
         {
             ColoredText.WriteLine("\n Pick an option:", ConsoleColor.Yellow);
@@ -43,6 +45,7 @@ namespace Project_I_Todo_list
             Console.Write("\n (");
             ColoredText.Write("3", ConsoleColor.Yellow);
             Console.Write(") Edit a project.");
+
             Console.Write("\n (");
             ColoredText.Write("4", ConsoleColor.Yellow);
             Console.Write(") Remove a project");
