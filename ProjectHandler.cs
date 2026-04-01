@@ -214,7 +214,7 @@ namespace Project_I_Todo_list
                     if (project.TaskList[i].ID == taskID)
                     {
                         project.TaskList.RemoveAt(i);
-                        continue;
+                        break;
                     }
                 }
             }
@@ -232,7 +232,6 @@ namespace Project_I_Todo_list
 
             foreach (Project project in ProjectsList)
             {
-
                 Console.WriteLine("\n----------------------------------------------------------------------------------------------");
                 ColoredText.Write("\n Project:", ConsoleColor.Green);
                 Console.Write("   " + project.Name);
@@ -325,7 +324,6 @@ namespace Project_I_Todo_list
             Console.WriteLine("\n----------------------------------------------------------------------------------------------");
             ColoredText.WriteLine("\n    " + "Project name", ConsoleColor.Green);
 
-
             for (int i = 0; i < ProjectsList.Count; i++)
             {
                 Console.WriteLine("\n " + (i + 1) + ". " + ProjectsList[i].Name);
@@ -342,8 +340,7 @@ namespace Project_I_Todo_list
 
             while (String.IsNullOrEmpty(result))
             {
-                ColoredText.WriteLine(" " + variableName + " can't be an empty string", ConsoleColor.Red);
-                
+                ColoredText.WriteLine(" " + variableName + " can't be an empty string", ConsoleColor.Red);                
                 Console.Write(" Enter a " + variableName + ": ");
                 result = Console.ReadLine();
             }
