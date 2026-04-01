@@ -577,7 +577,8 @@ namespace Project_I_Todo_list
                    new Task(nextTaskID++, "Programming", "Do this projects coding", new DateTime(2026,04,01), "Not finished"),
                    new Task(nextTaskID++, "Testing", "Test this projects code", new DateTime(2026,04,01), "Not finished"),
                    new Task(nextTaskID++, "Deploying", "Deploy this project code",new DateTime(2026,04,01), "Not finished")
-               ]);
+               ]
+            );
 
             ProjectsList.Add(project);
 
