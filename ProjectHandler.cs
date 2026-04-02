@@ -94,7 +94,7 @@ namespace Project_I_Todo_list
             Console.Write("\n ");
             int min = 1;
             int max = 2;
-            int answer = GetValidatedIntFromConsole("Number", min, max);
+            int answer = Validation.GetValidatedIntFromConsole("Number", min, max);
 
             if (answer == 1)
                 ShowTaskListByProject();
@@ -106,7 +106,7 @@ namespace Project_I_Todo_list
         {
             ColoredText.WriteLine("\n To enter a new project - Follow the steps\n",ConsoleColor.Yellow);
 
-            string name = GetValidatedStringFromConsole("Project name");
+            string name = Validation.GetValidatedStringFromConsole("Project name");
             nextProjectID++;
             Project project = new Project(nextProjectID, name);
             ProjectsList.Add(project);
@@ -118,8 +118,8 @@ namespace Project_I_Todo_list
             ShowProjects();
             int min = 1;
             int max = ProjectsList.Count;
-            int index = GetValidatedIntFromConsole("Number", min, max );
-            ProjectsList[index - 1].Name = GetValidatedStringFromConsole("Project name");
+            int index = Validation.GetValidatedIntFromConsole("Number", min, max );
+            ProjectsList[index - 1].Name = Validation.GetValidatedStringFromConsole("Project name");
         }
 
         public void RemoveAProject()
@@ -128,7 +128,7 @@ namespace Project_I_Todo_list
             ShowProjects();
             int min = 1;
             int max = ProjectsList.Count;
-            int index = GetValidatedIntFromConsole("Number", min, max);
+            int index = Validation.GetValidatedIntFromConsole("Number", min, max);
             
             ColoredText.WriteLine("\n " + ProjectsList[index-1].Name + " has been removed", ConsoleColor.Yellow);
             ProjectsList.RemoveAt(index-1);
@@ -142,18 +142,18 @@ namespace Project_I_Todo_list
             ShowProjects();
             int min = 1;
             int max = ProjectsList.Count;
-            int projectIndex = GetValidatedIntFromConsole("Number", min, max);
+            int projectIndex = Validation.GetValidatedIntFromConsole("Number", min, max);
 
             ColoredText.WriteLine("\n To enter a task - Follow the steps", ConsoleColor.Yellow);
 
-            string title = GetValidatedStringFromConsole("Title");
+            string title = Validation.GetValidatedStringFromConsole("Title");
 
-            string description = GetValidatedStringFromConsole("Description");
+            string description = Validation.GetValidatedStringFromConsole("Description");
 
-            string dateStr = GetValidatedDateFromConsole(true);
+            string dateStr = Validation.GetValidatedDateFromConsole(true);
             DateTime dueDate = DateTime.Parse(dateStr);
 
-            string status = GetValidatedStatusFromConsole(true);
+            string status = Validation.GetValidatedStatusFromConsole(true);
             
             Task task = new Task(nextTaskID++, title, description, dueDate, status);
             ProjectsList[projectIndex - 1].TaskList.Add(task);
@@ -167,7 +167,7 @@ namespace Project_I_Todo_list
             List<Task> taskList = ShowTaskList(false, true);
             int min = 1;
             int max = taskList.Count;
-            int index = GetValidatedIntFromConsole("Number", min, max);
+            int index = Validation.GetValidatedIntFromConsole("Number", min, max);
 
             ColoredText.WriteLine("\n Enter a new values. Just press enter if you do not want to change the value.", ConsoleColor.Yellow);
             
@@ -181,13 +181,13 @@ namespace Project_I_Todo_list
             if (String.IsNullOrEmpty(description) == false)
                 taskList[index - 1].Description = description;
 
-            string dateStr = GetValidatedDateFromConsole(false);
+            string dateStr = Validation.GetValidatedDateFromConsole(false);
             if (dateStr != null){
                 DateTime dueDate = DateTime.Parse(dateStr);
                 taskList[index - 1].DueDate = dueDate;
             }
 
-            string status = GetValidatedStatusFromConsole(false);
+            string status = Validation.GetValidatedStatusFromConsole(false);
             if (String.IsNullOrEmpty(status) == false)
                 taskList[index - 1].Status = status;
 
@@ -200,7 +200,7 @@ namespace Project_I_Todo_list
             List<Task> taskList = ShowTaskList(false, true); 
             int min = 1;
             int max = taskList.Count;
-            int index = GetValidatedIntFromConsole("Number", min, max);
+            int index = Validation.GetValidatedIntFromConsole("Number", min, max);
             
             int taskID = taskList[index - 1].ID;
             string taskTitle = taskList[index - 1].Title;
@@ -331,112 +331,6 @@ namespace Project_I_Todo_list
             Console.WriteLine("\n----------------------------------------------------------------------------------------------");
         }
 
-        // Gets a atring from the console and validates it so its not empty.
-        private string GetValidatedStringFromConsole(string variableName)
-        {
-            Console.Write("\n Enter a " + variableName + ": ");
-            string result = Console.ReadLine();
-
-            while (String.IsNullOrEmpty(result))
-            {
-                ColoredText.WriteLine(" " + variableName + " can't be an empty string", ConsoleColor.Red);                
-                Console.Write(" Enter a " + variableName + ": ");
-                result = Console.ReadLine();
-            }
-
-            return result;
-        }
-
-        // Gets an integer from the console and validates it so its not empty and only contains digits, and also checks if the number is between min and max.
-        public int GetValidatedIntFromConsole(string variableName, int min, int max)
-        {
-            bool isValidInteger;
-            int index;
-            do
-            {
-                Console.Write("\n Enter a " + variableName + ": ");
-                isValidInteger = int.TryParse(Console.ReadLine(), out index);
-
-                if (isValidInteger == false)
-                {
-                    ColoredText.WriteLine(" " + variableName + " can only contain digits and can't be empty.", ConsoleColor.Red);
-                }
-                else if (index < min || index > max)
-                {
-                    ColoredText.WriteLine(" " + variableName + " must be non-negative and higher than zero and lower than " + (max + 1) + ".", ConsoleColor.Red);
-                    isValidInteger = false;
-                }
-            } while (isValidInteger == false);
-
-            return index;
-        }
-
-        // Thera are two cases, in the first case NullOrEmpty is allowed, in the second case its treated as an error.
-        private string GetValidatedDateFromConsole(bool checkNullOrEmpty)
-        {
-            bool isDate;
-            string result;
-            do
-            {
-                Console.Write("\n Enter a new Due date: ");
-                result = Console.ReadLine();
-
-                if (!checkNullOrEmpty && String.IsNullOrEmpty(result))
-                {
-                    return null;
-                }
-
-                else if (String.IsNullOrEmpty(result))
-                {
-                    ColoredText.WriteLine(" You have entered an empty string for date.", ConsoleColor.Red);
-                    isDate = false;
-                }
-                else
-                {
-                    isDate = DateTime.TryParse(result, out DateTime dueDate);
-
-                    if (isDate == false)
-                    {
-                        ColoredText.WriteLine(" You have not entered a valid date.", ConsoleColor.Red);
-                    }
-                }
-
-            } while (isDate == false);
-
-            return result;
-        }
-
-        // Thera are two cases, in the first case NullOrEmpty is allowed, in the second case its treated as an error.
-        private string GetValidatedStatusFromConsole(bool checkNullOrEmpty)
-        {
-            string result;
-            bool endLoop = false;
-            do
-            {
-                Console.Write("\n Enter a new Status: ");
-                result = Console.ReadLine();
-
-                if (!checkNullOrEmpty && String.IsNullOrEmpty(result))
-                {
-                    endLoop = true;
-                }
-                else if (result == "Not finished" || result == "Finished")
-                {
-                    endLoop = true;
-                }
-                else if (String.IsNullOrEmpty(result))
-                {
-                    ColoredText.WriteLine(" You have entered an empty string. Please enter a status", ConsoleColor.Red);
-                }
-                else
-                {
-                    ColoredText.WriteLine(" You have not entered a valid status. Please enter \"Not finished\" or \"Finished\"", ConsoleColor.Red);
-                }
-                
-            } while (!endLoop);
-
-            return result;
-        }  
 
         // GetLongestTextLengthForTitle() finds the longest task.title.
         private int GetLongestTextLengthForTitle()

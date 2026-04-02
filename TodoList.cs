@@ -74,7 +74,7 @@ namespace Project_I_Todo_list
             Console.Write("\n ");
             int min = 1;
             int max = 8;
-            int answer = projectHandler.GetValidatedIntFromConsole("Number", min, max);
+            int answer = Validation.GetValidatedIntFromConsole("Number", min, max);
 
             switch (answer)
             { 
