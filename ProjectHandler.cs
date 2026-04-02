@@ -58,7 +58,6 @@ namespace Project_I_Todo_list
             int notDoneTask = 0;
             int doneTask = 0;
 
-
             foreach (Project project in ProjectsList)
             {
                 foreach (Task task in project.TaskList)
